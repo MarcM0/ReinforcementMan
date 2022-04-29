@@ -2,16 +2,13 @@ import pygame
 import Ghost
 import math
 from Constants import *
-import neat
-from NeatHelpers import loadModel
 
 class Pac_Man:
-    def __init__(self, x, y, movementFunction,generation):
+    def __init__(self, x, y,generation):
 
         #lives
         self.lives = 2
         if(neatMode): self.lives = neatLives
-        if(neatMode and generation%disableGhostsEvery==1): self.lives= 0
         
         # Constants
         self.size = 26
@@ -19,7 +16,6 @@ class Pac_Man:
         self.step = self.step_len
 
         # Movement directions
-        self.movementFunction = movementFunction
         self.COORD_DIR = {0: [1, 0], 1: [0, 1], 2: [-1, 0], 3: [0, -1]}
         self.look_dir = DOWN
         self.humanInput = DOWN
@@ -58,10 +54,6 @@ class Pac_Man:
         #used for neatmode
         self.penalty = 0
         self.framesNotMoving = 0
-        
-        # Neural network
-        self.net = None
-        if(neatLoadMode): self.net = loadModel(modelCheckpoint)
 
         #other neat stuff
         self.pelletRatio = 0 #pellets collected/total
@@ -99,10 +91,10 @@ class Pac_Man:
 
         return False
 
-    def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit):
+    def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit,action):
         ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
         self.penalty = 0
-        self.look_dir = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
+        self.look_dir = action
         self.lastMoveDir = self.move_dir
         step = self.step_len
         self.array_coord = [int((self.x + block_size / 2) / block_size),

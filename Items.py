@@ -36,7 +36,7 @@ class PowerPellet:
         self.x = x * block_size + half_block_size
         self.y = y * block_size + half_block_size
 
-        if ((not ((generation%disablePowerPelletsEvery==0) and (disablePowerPellets))) or not neatMode):
+        if ((not disablePowerPellets) or not neatMode):
             self.here = True
         else:
             self.here = False

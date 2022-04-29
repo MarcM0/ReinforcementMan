@@ -9,30 +9,29 @@ from Ghost import Ghost
 from Constants import *
 from pygame.locals import *
 from movementAlgos import *
-from NeatHelpers import *
-import neat
+from ReinforcementHelpers import *
+import gym
+from gym import spaces
 import random
 
-pacmanController = humanPlayer #  #options: dummy, humanPlayer, neat, avoid_ghost_and_wall_dummy, pathFind_to_target
-
-if(neatMode): 
-    pacmanController = modelNeat
-
-if(neatLoadMode):
-    pacmanController = modelNeat
-
-class Main:
+class pacEnv(gym.Env):
     def __init__(self):
+        super(pacEnv, self).__init__()
+		# Define action and observation space
+		# They must be gym.spaces objects
+		# Example when using discrete actions:
+        self.action_space = spaces.Discrete(numOutputs)
         self.maze_width = MapSizeX
         self.maze_height = MapSizeY
         self.current_generation = 0
-        if LoadTrainingCheckpointPath != None:
-            self.current_generation = LoadTrainingCheckpointGenerationNum
 
         self.last_life_score = 0
 
         self.display_width = self.maze_width * block_size
         self.display_height = self.maze_height * block_size + offset
+
+        # Example for using image as input (channel-first; channel-last also works):
+        self.observation_space = spaces.Box(low=float('-inf'), high=float('inf'),shape=(numInputs,), dtype=np.float32)
 
         self.fps = 60
         if(fastMode): self.fps = 99999999
@@ -42,20 +41,63 @@ class Main:
 
         self.score = 0
         self.lastFrameScore = 0
+        self.lastFrameScore2 = 0
         self.framesUntilOutOfTime = scoreTimeConstraint
-        if(neatMode and self.current_generation%disableGhostsEvery ==1 and turnOffGhosts): self.framesUntilOutOfTime= 15*60
+        if(neatMode and turnOffGhosts): self.framesUntilOutOfTime= 15*60
 
         self.collected_pellets = 0
         self.pellets = []
         self.power_pellets = []
         self.num_fruit = 0
-        self.running = True
         self.coinFlip = (random.choice([0,1]) == 1)
         self.manuallySave = False #keep this false
 
         self.game_state = "run"
+        self.done = False
         self.level = 0
 
+    def step(self, action):
+        self.lastFrameScore2 = self.score
+        if self.game_state in ("run", "respawn"):
+                # main game loop
+                self.events(self.player)
+                self.loop(action)
+                self.draw(self.display_surf, self.display)
+
+                # check win condition
+                if self.collected_pellets >= len(self.pellets):
+                    self.game_state = "win"
+                    
+                if((not fastMode) or (self.tick_counter%neatFrameShow == 0)): 
+                    pygame.display.flip()
+                    if(showFPS): print("fps:",self.fps_clock.get_fps()) 
+                self.fps_clock.tick(self.fps)
+                self.tick_counter += 1
+
+        # What to do when we win/lose
+        elif self.game_state == "win":
+            self.userReset()
+            print("won level, moving on, score:",self.score)
+            self.game_state = "run"
+        elif self.game_state == "lose":
+            self.done = True
+
+        self.observation,_,_ = rotatingCameraNeatHelper(self.player, self.maze, self.ghosts, self.pellets, self.power_pellets, self.fruit)
+        info = {}
+
+        if self.done:
+            self.reward = dieScore
+        else:
+            self.reward = self.score-self.lastFrameScore2
+
+        return self.observation, self.reward, self.done, info
+
+    def reset(self):
+        self.userReset(hard = True, newMap = True)
+        self.done = False
+        self.observation,_,_ = rotatingCameraNeatHelper(self.player, self.maze, self.ghosts, self.pellets, self.power_pellets, self.fruit)
+        return self.observation
+        
     def events(self, player):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -79,7 +121,7 @@ class Main:
                 exit()
         return
 
-    def loop(self):
+    def loop(self,action):
         #kill score
         if(neatMode and killScore!=None and self.score >= killScore):
             self.player.lives = -1
@@ -101,7 +143,6 @@ class Main:
                 self.framesUntilOutOfTime-=1
                 if self.framesUntilOutOfTime <=0:
                      self.framesUntilOutOfTime = scoreTimeConstraint
-                     if(neatMode and self.current_generation%disableGhostsEvery ==1 and turnOffGhosts): self.framesUntilOutOfTime= 15*60
                      if self.player.lives > 0:
                             self.player.target = 0
                             self.game_state = "respawn"
@@ -112,7 +153,7 @@ class Main:
                             self.game_state = "lose"
             else:
                 self.framesUntilOutOfTime = scoreTimeConstraint
-                if(neatMode and self.current_generation%disableGhostsEvery ==1 and turnOffGhosts): self.framesUntilOutOfTime= 15*60
+                if(neatMode and turnOffGhosts): self.framesUntilOutOfTime= 15*60
         
         self.lastFrameScore =self.score 
         self.player.pelletRatio =  self.collected_pellets/len(self.pellets)
@@ -127,7 +168,7 @@ class Main:
 
             #this only decreases score in neatmode (look at the move function)
             scoreB4 = self.score
-            self.score -= self.player.move(maze = self.maze, display_width = self.display_width, ghosts = self.ghosts, power_pellets = self.power_pellets, pellets = self.pellets, fruit = self.fruit)
+            self.score -= self.player.move(maze = self.maze, display_width = self.display_width, ghosts = self.ghosts, power_pellets = self.power_pellets, pellets = self.pellets, fruit = self.fruit,action=action)
             if(self.lastFrameScore == scoreB4):
                 self.lastFrameScore = self.score #simulates the score not increasing
 
@@ -268,8 +309,7 @@ class Main:
     #resets the game
     #if hard is false, we are just moving to a new level
     #if hard is true, its a true reset
-    def reset(self, hard = False, newMap = False,coinFlip = False):
-        net = self.player.net
+    def userReset(self, hard = False, newMap = False,coinFlip = False):
         newlives = self.player.lives
         if(coinFlip): self.coinFlip = (random.choice([0,1]) == 1)
         #hard reset  
@@ -283,8 +323,6 @@ class Main:
         else:
             self.level += 1
 
-        if(neatMode and self.current_generation%disableGhostsEvery ==1 and turnOffGhosts): newlives= 0
-
         self.framesUntilOutOfTime = scoreTimeConstraint
         
         #make a new map
@@ -294,8 +332,7 @@ class Main:
         self.collected_pellets = 0
         self.temp_counter = 0
 
-        self.player = Pac_Man(spawn_x, spawn_y,pacmanController,self.current_generation)
-        self.player.net = net
+        self.player = Pac_Man(spawn_x, spawn_y,self.current_generation)
         self.player.lives = newlives
 
         # generate all pellets and power pellets
@@ -322,38 +359,6 @@ class Main:
         self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
         self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
-    #main loop of the game
-    def game_loop(self):
-        while self.running:
-            if self.game_state in ("run", "respawn"):
-                # main game loop
-                self.events(self.player)
-                self.loop()
-                self.draw(self.display_surf, self.display)
-
-                # check win condition
-                if self.collected_pellets >= len(self.pellets):
-                    self.game_state = "win"
-                    
-                if((not fastMode) or (self.tick_counter%neatFrameShow == 0)): 
-                    pygame.display.flip()
-                    if(showFPS): print("fps:",self.fps_clock.get_fps()) 
-                self.fps_clock.tick(self.fps)
-                self.tick_counter += 1
-
-            # What to do when we win/lose
-            elif self.game_state == "win":
-                self.reset()
-                if((main.current_generation%disableGhostsEvery != 1 or not turnOffGhosts) and (main.current_generation%disablePowerPelletsEvery != 0 or not disablePowerPellets)) or not neatMode:print("won level, moving on, score:",self.score)
-                self.game_state = "run"
-            elif self.game_state == "lose":
-                self.running = False
-                if(neatMode or evaluateModelMode): 
-                    self.running = True
-                    self.game_state = "run"
-                    return self.score #update fitness
-                print("score:",self.score)
-
     def run(self):
         # initialize
         random.seed()
@@ -365,7 +370,7 @@ class Main:
 
         # spawn maze and player
         self.maze = Maze(self.maze_width, self.maze_height)
-        self.player = Pac_Man(spawn_x, spawn_y, pacmanController,self.current_generation)
+        self.player = Pac_Man(spawn_x, spawn_y,self.current_generation)
 
         # generate all pellets and power pellets
         self.power_pellets = []
@@ -391,15 +396,17 @@ class Main:
         self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]).convert(), False)
 
         #the gameloop is elsewhere for neat
-        if (not neatMode and not evaluateModelMode): self.game_loop()
+        if (not neatMode and not evaluateModelMode and not checkEnvMode): 
+            while(not self.done):
+                self.step(self.player.humanInput)
 
         #initialize neat stuff
-        if neatMode: neatInit(self) 
+        if neatMode: reinforcementTrain()
 
         #initialize eval mode
         if evaluateModelMode: evaluateModelInit(self) 
 
 
 if __name__ == "__main__":
-    main = Main()
+    main = pacEnv()
     main.run()

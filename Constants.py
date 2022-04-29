@@ -25,15 +25,26 @@ scaling_factor = 0.7 #factor by which we scale dimensions of game window
 evaluateModelMode = False #runs the selected model for a select number of games and then prints the models statistics 
 numberOfTests = 30 #number of games to evaluate on
 
+#architechture
+numInputs = 49
+numOutputs = 4
+
+# debug
+checkEnvMode = True
+
 #Quick Toggles
-neatMode = True #puts the model into a t8raining loop
+neatMode = False #puts the model into a training loop
+fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatLoadMode = False #Loads an old neat model (CANT HAVE BOTH THIS AND NEATMODE TRUE)
-checkpointFolder = "Checkpoints" 
-modelCheckpoint = "OneHitGen.pkl" 
+models_dir = "models" #where we save models
+logdir = "logs" #where we save logs
+environmentName = 'LunarLander-v2'
+modelCheckpoint = "A2C" 
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 turnOffGhosts = False
+dieScore = -10000
 scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
 IdlePenalty = 6/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
 neatLives = 1 #number of lives neatMan has while training in neatmode
@@ -47,26 +58,15 @@ antiRacetrack = False #add walls to prevent spinning around ghost house
 forceStuck = True #turns on antiracetrack and forces pacman to immediately turn around
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
 disablePowerPellets = False #disable power pellets
-disablePowerPelletsEvery = 5 #disable Power pellets x generations if disablePowerPellets=True
-disableGhostsEvery = 5 #disable ghosts x generations if disable=True (this also sets neatlives to 0 and scoretimeconstraint to 15*60)
 killScore = None #kill pacman if he gets this score (None to disable)
 suicidePenalty = 15 #penalty for jumping into ghosts
 
-# where we load a whole population to continue training
-# set to None to train from scratch
-LoadTrainingCheckpointPath = None 
-# LoadTrainingCheckpointPath = checkpointFolder + "/OneHitPopulationGen5" 
-LoadTrainingCheckpointGenerationNum = 1 #if LoadTrainingCheckpointPath is not None, generations starts at this
-
-neatConfigPath = "neatConfig.text"
-
-#hyperparameters (more hyperparams in config.text)
-neatHyperparams = {"NeatNumGenerations":99999999, 
-                  "NumGenB4MapSwitch":5,
-                  "NumGenB4Checkpoint":1,
-                  "SecondsB4Checkpoint":3000,
-                  "PopulationCheckpointName": checkpointFolder+ "/OneHitPopulationGen",
-                  "modelName": "OneHitGen"
+#hyperparameters
+neatHyperparams = {"totalSteps":10000, 
+                  "NumStepsB4MapSwitch":5,
+                  "checkpointFreq":1000,
+                  "evalFreq":500,
+                  "modelName": "A2C"
                   }
 
 #movement constants
@@ -93,4 +93,8 @@ if(neatMode):
     neatLoadMode = False
     fastMode = True
 
+if(checkEnvMode):
+    neatMode = False
+    fastMode = False
+    evaluateModelMode = False
 
