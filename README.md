@@ -12,3 +12,6 @@ https://github.com/PiotrDabkowski/Js2Py
 PY-MAN (Base Game): 
 https://github.com/moritree/PY-MAN
 
+Reinforcement Learning Tutorial:
+https://github.com/nicknochnack/StableBaselinesRL
+
