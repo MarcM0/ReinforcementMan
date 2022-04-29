@@ -12,3 +12,8 @@ https://github.com/PiotrDabkowski/Js2Py
 PY-MAN (Base Game): 
 https://github.com/moritree/PY-MAN
 
+Reinforcement Learning Tutorial:
+https://pythonprogramming.net/custom-environment-reinforcement-learning-stable-baselines-3-tutorial/
+
+Stable Baseline Docs: https://stable-baselines.readthedocs.io/en/master/
+
