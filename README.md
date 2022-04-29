@@ -15,3 +15,5 @@ https://github.com/moritree/PY-MAN
 Reinforcement Learning Tutorial:
 https://www.youtube.com/watch?v=nRHjymV2PX8&ab_channel=NicholasRenotte
 
+Stable Baseline Docs: https://stable-baselines.readthedocs.io/en/master/
+
