@@ -179,7 +179,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
                 ghostObjs.append(testTile)  
                 ghostMoveBlocks.append(destTile)
 
-    if pacman.frameMod60%15==0 or ((abs(pacman.move_dir - pacman.lastMoveDir)!=2) and (pacman.lastghostObjs!=ghostObjs or pacman.lasttruePos!=truePos or pacman.ghostMoveBlocksLast!=ghostMoveBlocks or not np.array_equal(canmove, pacman.canmoveLast))):
+    if pacman.frameMod60%15==0 or (pacman.lastghostObjs!=ghostObjs or pacman.lasttruePos!=truePos or pacman.ghostMoveBlocksLast!=ghostMoveBlocks or not np.array_equal(canmove, pacman.canmoveLast))):
     
         if (ghostObjs):
             path,movingTowards = multiDest([pac_manX, pac_manY], [ghostObjs], [1],maze.maze_array, upNotAllowed,ghostMoveBlocks,exceptions)
