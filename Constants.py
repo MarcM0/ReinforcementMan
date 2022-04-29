@@ -30,42 +30,35 @@ numInputs = 49
 numOutputs = 4
 
 # debug
-checkEnvMode = True
+checkEnvMode = False
 
 #Quick Toggles
-neatMode = False #puts the model into a training loop
-fastMode = False #No longer human playable, increases speed of game to absolute limits
-neatLoadMode = False #Loads an old neat model (CANT HAVE BOTH THIS AND NEATMODE TRUE)
+neatMode = True #puts the model into a training loop
+fastMode = False #run game as fast as possible (not human playable)
 models_dir = "models" #where we save models
 logdir = "logs" #where we save logs
-environmentName = 'LunarLander-v2'
 modelCheckpoint = "A2C" 
-fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 turnOffGhosts = False
-dieScore = -10000
-scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
-IdlePenalty = 6/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
+dieScore = 10000 #penalty for dying
+scoreTimeConstraint = 60*500 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
+IdlePenalty = 2/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
 neatLives = 1 #number of lives neatMan has while training in neatmode
-backTrackPenalty = 0#2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
+backTrackPenalty = 2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
 sparseMode = False #if true, 50% of only 1 out of 5 pellets spawning
 rotateCamera = True #rotates the camera so that the 'top' of the camera is the direction pacman is facing 
 wallBonkPenalty = 2/60 #1/60 #penalize model from trying to walk into walls
-oneOutput = False #turn this on if you want to use the 1 output scheme
-wacky2Output = False #a weird 2 output mode
 antiRacetrack = False #add walls to prevent spinning around ghost house
-forceStuck = True #turns on antiracetrack and forces pacman to immediately turn around
+forceStuck = False #turns on antiracetrack and forces pacman to immediately turn around
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
 disablePowerPellets = False #disable power pellets
 killScore = None #kill pacman if he gets this score (None to disable)
-suicidePenalty = 15 #penalty for jumping into ghosts
 
 #hyperparameters
-neatHyperparams = {"totalSteps":10000, 
-                  "NumStepsB4MapSwitch":5,
-                  "checkpointFreq":1000,
-                  "evalFreq":500,
+neatHyperparams = {"totalSteps":60*9999999999999999999, 
+                  "checkpointFreq":60*60*60,
+                  "evalFreq":60*60*60,
                   "modelName": "A2C"
                   }
 
@@ -83,18 +76,19 @@ UP = 3
 
 
 #Don't touch
+if(checkEnvMode):
+    evaluateModelMode = False
+    neatMode = True
+    
 if(not neatMode):
     clearMapBonus = 0
     turnOffGhosts = False
     disablePowerPellets = False
+
 if(neatMode):
     if(forceStuck):antiRacetrack = True
     evaluateModelMode = False
-    neatLoadMode = False
     fastMode = True
 
-if(checkEnvMode):
-    neatMode = False
-    fastMode = False
-    evaluateModelMode = False
+
 

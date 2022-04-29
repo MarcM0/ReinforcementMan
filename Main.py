@@ -58,6 +58,13 @@ class pacEnv(gym.Env):
 
     def step(self, action):
         self.lastFrameScore2 = self.score
+
+        #convert direction into something that makes sense for neat
+        if(neatMode or evaluateModelMode):
+            FourDirs = [self.player.move_dir,self.player.move_dir+1,self.player.move_dir+3,self.player.move_dir+2]
+            action = FourDirs[action]
+            action = action%4 
+
         if self.game_state in ("run", "respawn"):
                 # main game loop
                 self.events(self.player)
@@ -82,20 +89,18 @@ class pacEnv(gym.Env):
         elif self.game_state == "lose":
             self.done = True
 
-        self.observation,_,_ = rotatingCameraNeatHelper(self.player, self.maze, self.ghosts, self.pellets, self.power_pellets, self.fruit)
+        self.observation = rotatingCameraNeatHelper(self.player, self.maze, self.ghosts, self.pellets, self.power_pellets, self.fruit)
         info = {}
 
-        if self.done:
-            self.reward = dieScore
-        else:
-            self.reward = self.score-self.lastFrameScore2
+        self.reward = self.score-self.lastFrameScore2
 
         return self.observation, self.reward, self.done, info
 
     def reset(self):
         self.userReset(hard = True, newMap = True)
         self.done = False
-        self.observation,_,_ = rotatingCameraNeatHelper(self.player, self.maze, self.ghosts, self.pellets, self.power_pellets, self.fruit)
+        self.game_state = "run"
+        self.observation = rotatingCameraNeatHelper(self.player, self.maze, self.ghosts, self.pellets, self.power_pellets, self.fruit)
         return self.observation
         
     def events(self, player):
@@ -202,6 +207,7 @@ class pacEnv(gym.Env):
                             self.fruit.here = False
                             self.player.lives -= 1
                             self.temp_counter = 0
+                            if(neatMode): self.score-=dieScore
                         else:
                             self.game_state = "lose"
 
@@ -395,18 +401,20 @@ class pacEnv(gym.Env):
         self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]).convert(), True)
         self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]).convert(), False)
 
-        #the gameloop is elsewhere for neat
-        if (not neatMode and not evaluateModelMode and not checkEnvMode): 
-            while(not self.done):
-                self.step(self.player.humanInput)
-
-        #initialize neat stuff
-        if neatMode: reinforcementTrain()
-
-        #initialize eval mode
-        if evaluateModelMode: evaluateModelInit(self) 
+        #gameloop if human is playing
+        if (not evaluateModelMode and not neatMode and not evaluateModelMode): 
+                while(not self.done):
+                    self.step(self.player.humanInput)
+                
+        
 
 
 if __name__ == "__main__":
     main = pacEnv()
-    main.run()
+    if(neatMode):
+        reinforcementTrain()
+    elif(evaluateModelMode):
+        #todo
+        1==1
+    elif(not neatMode and not evaluateModelMode and not evaluateModelMode): main.run()
+

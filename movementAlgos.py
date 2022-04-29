@@ -470,8 +470,6 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
 
     unrotatedCloseghosts2 = closeGhosts2.reshape(-1)
     unrotatedGhostApproaching = ghostApproaching.reshape(-1)
-    if (wacky2Output or oneOutput) and (((pacman.look_dir-pacman.move_dir)%4) == 1):
-        rotateDir = pacman.look_dir
 
     if(rotateCamera):
         if rotateDir == RIGHT:
@@ -525,13 +523,13 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
             canmove = canmove.reshape(-1)
     
     inputs = np.concatenate(([abs(pacman.move_dir - pacman.lastMoveDir)!=2,pacman.pelletRatio,pacman.framesNotMoving,pacman.framesNotScoring/60,pacman.allGhostsOut],closeInters2,closeGhosts,closeBlueGhosts,closePellets,closePowerPellets,closeGhosts2,closeBlueGhosts2,closePellets2,closePowerPellets2,canmove,ghostApproaching)).astype(np.float32, copy=False)
-    return inputs, unrotatedCloseghosts2, unrotatedGhostApproaching
+    return inputs
     
 #nead model controller
 def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     
     #Get the inputs
-    inputs, unrotatedCloseghosts2, unrotatedGhostApproaching = rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
+    inputs = rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
 
     #pass inputs into the neural network
     outputs = [pacman.net.activate(inputsUP)[0],pacman.net.activate(inputsRIGHT)[0],pacman.net.activate(inputsLEFT)[0],pacman.net.activate(inputsDOWN)[0]]

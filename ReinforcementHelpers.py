@@ -3,11 +3,11 @@ from Constants import *
 from stable_baselines3 import A2C
 import os
 from stable_baselines3.common.callbacks import CallbackList, CheckpointCallback, EvalCallback
+from Main import pacEnv
 
 def reinforcementLoad():
     #create environment
-    env = gym.make(environmentName)
-    env.reset()
+    env = pacEnv()
 
     #algo
     model = A2C.load(modelCheckpoint, env=env)
@@ -33,11 +33,11 @@ def reinforcementTrain():
         os.makedirs(logdir)
 
     #create environment
-    env = gym.make(environmentName)
+    env = pacEnv()
+    env.run()
     # Separate evaluation env
-    eval_env = gym.make(environmentName)
-    eval_env.reset()
-    env.reset()
+    eval_env = pacEnv()
+    eval_env.run()
 
     #algo
     model = A2C('MlpPolicy', env, verbose=1, tensorboard_log=logdir)
