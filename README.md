@@ -13,5 +13,5 @@ PY-MAN (Base Game):
 https://github.com/moritree/PY-MAN
 
 Reinforcement Learning Tutorial:
-https://github.com/nicknochnack/StableBaselinesRL
+https://www.youtube.com/watch?v=nRHjymV2PX8&ab_channel=NicholasRenotte
 
