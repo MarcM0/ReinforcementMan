@@ -13,7 +13,7 @@ PY-MAN (Base Game):
 https://github.com/moritree/PY-MAN
 
 Reinforcement Learning Tutorial:
-https://www.youtube.com/watch?v=nRHjymV2PX8&ab_channel=NicholasRenotte
+https://pythonprogramming.net/custom-environment-reinforcement-learning-stable-baselines-3-tutorial/
 
 Stable Baseline Docs: https://stable-baselines.readthedocs.io/en/master/
 
