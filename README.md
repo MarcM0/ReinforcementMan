@@ -1,13 +1,5 @@
-# NEAT-MAN #
-Welcome to the sun-drenched tropical paradise of NEAT-MAN!
-We're so pleased to welcome you to our beautiful home!
-Come enjoy a natural wonder-land to which we've added
-world's finest resort facilities, a spectacular amusement park,
-and succulent seafood!
-This and more await you on NEAT-MAN!
-Come relax and let us refresh your body and spirit.
-
-This is a PacMan playing AI made with NEAT. The best model checkpoint is OneHitGen24
+# REINFORCEMENT-MAN #
+This is a fork of https://github.com/MarcM0/NeatMan. Neat didn't work as well as I'd hoped so I'm trying reinforcement learning.
 
 ### Repos We Based This Project Off Of: ###
 
@@ -20,13 +12,3 @@ https://github.com/PiotrDabkowski/Js2Py
 PY-MAN (Base Game): 
 https://github.com/moritree/PY-MAN
 
-### Other Useful Links: ###
-
-Neat library documentation: 
-https://neat-python.readthedocs.io/en/latest/
-
-Code tasks:
-https://github.com/MarcM0/NeatMan/projects/2
-
-Proposal tasks:
-https://github.com/MarcM0/NeatMan/projects/1
