@@ -62,13 +62,13 @@ class pacEnv(gym.Env):
         #convert direction into something that makes sense for neat
         if(neatMode or evaluateModelMode):
             FourDirs = [self.player.move_dir,self.player.move_dir+1,self.player.move_dir+3,self.player.move_dir+2]
-            action = FourDirs[action]
-            action = action%4 
+            nextMove = FourDirs[action]
+            nextMove = nextMove%4 
 
         if self.game_state in ("run", "respawn"):
                 # main game loop
                 self.events(self.player)
-                self.loop(action)
+                self.loop(nextMove)
                 self.draw(self.display_surf, self.display)
 
                 # check win condition
@@ -89,8 +89,14 @@ class pacEnv(gym.Env):
         elif self.game_state == "lose":
             self.done = True
 
-        self.observation = rotatingCameraNeatHelper(self.player, self.maze, self.ghosts, self.pellets, self.power_pellets, self.fruit)
+        self.observation,unrotatedCloseghosts, unrotatedGhostApproaching = rotatingCameraNeatHelper(self.player, self.maze, self.ghosts, self.pellets, self.power_pellets, self.fruit)
         info = {}
+
+        fourDirs2=[UP,RIGHT,LEFT,DOWN]
+        for Dir, closeghost, approaching in zip(fourDirs2,unrotatedCloseghosts,unrotatedGhostApproaching):
+            if(nextMove == Dir and approaching and closeghost<=2/5): 
+                self.score-=suicidePenalty
+                break
 
         self.reward = self.score-self.lastFrameScore2
 
@@ -100,7 +106,7 @@ class pacEnv(gym.Env):
         self.userReset(hard = True, newMap = True)
         self.done = False
         self.game_state = "run"
-        self.observation = rotatingCameraNeatHelper(self.player, self.maze, self.ghosts, self.pellets, self.power_pellets, self.fruit)
+        self.observation,_,_ = rotatingCameraNeatHelper(self.player, self.maze, self.ghosts, self.pellets, self.power_pellets, self.fruit)
         return self.observation
         
     def events(self, player):

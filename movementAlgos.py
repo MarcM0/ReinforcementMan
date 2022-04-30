@@ -468,7 +468,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     pacman.closePelletsLast = closePellets.copy()
     rotateDir = pacman.move_dir
 
-    unrotatedCloseghosts2 = closeGhosts2.reshape(-1)
+    unrotatedCloseghosts = closeGhosts.reshape(-1)
     unrotatedGhostApproaching = ghostApproaching.reshape(-1)
 
     if(rotateCamera):
@@ -523,7 +523,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
             canmove = canmove.reshape(-1)
     
     inputs = np.concatenate(([abs(pacman.move_dir - pacman.lastMoveDir)!=2,pacman.pelletRatio,pacman.framesNotMoving,pacman.framesNotScoring/60,pacman.allGhostsOut],closeInters2,closeGhosts,closeBlueGhosts,closePellets,closePowerPellets,closeGhosts2,closeBlueGhosts2,closePellets2,closePowerPellets2,canmove,ghostApproaching)).astype(np.float32, copy=False)
-    return inputs
+    return inputs,unrotatedCloseghosts, unrotatedGhostApproaching
     
 #nead model controller
 def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):

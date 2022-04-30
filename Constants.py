@@ -45,7 +45,7 @@ dieScore = 10000 #penalty for dying
 scoreTimeConstraint = 60*500 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
 IdlePenalty = 2/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
 neatLives = 1 #number of lives neatMan has while training in neatmode
-backTrackPenalty = 2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
+backTrackPenalty = 0.2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
 sparseMode = False #if true, 50% of only 1 out of 5 pellets spawning
 rotateCamera = True #rotates the camera so that the 'top' of the camera is the direction pacman is facing 
 wallBonkPenalty = 2/60 #1/60 #penalize model from trying to walk into walls
@@ -54,6 +54,7 @@ forceStuck = False #turns on antiracetrack and forces pacman to immediately turn
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
 disablePowerPellets = False #disable power pellets
 killScore = None #kill pacman if he gets this score (None to disable)
+suicidePenalty = 50 #penalty for approaching ghosts while they approach you
 
 #hyperparameters
 neatHyperparams = {"totalSteps":60*9999999999999999999, 
