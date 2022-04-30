@@ -23,7 +23,6 @@ class pacEnv(gym.Env):
         self.action_space = spaces.Discrete(numOutputs)
         self.maze_width = MapSizeX
         self.maze_height = MapSizeY
-        self.current_generation = 0
 
         self.last_life_score = 0
 
@@ -344,13 +343,13 @@ class pacEnv(gym.Env):
         self.collected_pellets = 0
         self.temp_counter = 0
 
-        self.player = Pac_Man(spawn_x, spawn_y,self.current_generation)
+        self.player = Pac_Man(spawn_x, spawn_y)
         self.player.lives = newlives
 
         # generate all pellets and power pellets
         self.power_pellets = []
         for loc in self.maze.power_pellet_locs:
-            self.power_pellets.append(PowerPellet(loc[0], loc[1],self.current_generation))
+            self.power_pellets.append(PowerPellet(loc[0], loc[1]))
         self.pellets = []
         for loc in self.maze.pellet_locs:
             self.pellets.append(Pellet(loc[0], loc[1],(neatMode and sparseMode and self.coinFlip)))
@@ -358,10 +357,10 @@ class pacEnv(gym.Env):
         self.ghosts = {}
 
         # spawn ghosts
-        self.ghosts["blinky"] = Ghost(house_x, house_y-2, (255, 80, 80), [house_x+7, house_y-7], "shadow",self.current_generation)
-        self.ghosts["pinky"] = Ghost(house_x-1, house_y, (255, 100, 150), [house_x-7, house_y-7], "speedy",self.current_generation)
-        self.ghosts["inky"] = Ghost(house_x, house_y, (100, 255, 255), [house_x+7, house_y+9], "bashful",self.current_generation)
-        self.ghosts["clyde"] = Ghost(house_x+1, house_y, (255, 200, 000), [house_x-7, house_y+9], "pokey",self.current_generation)
+        self.ghosts["blinky"] = Ghost(house_x, house_y-2, (255, 80, 80), [house_x+7, house_y-7], "shadow")
+        self.ghosts["pinky"] = Ghost(house_x-1, house_y, (255, 100, 150), [house_x-7, house_y-7], "speedy")
+        self.ghosts["inky"] = Ghost(house_x, house_y, (100, 255, 255), [house_x+7, house_y+9], "bashful")
+        self.ghosts["clyde"] = Ghost(house_x+1, house_y, (255, 200, 000), [house_x-7, house_y+9], "pokey")
 
         self.ghosts["blinky"].mode = "normal"
         self.ghosts["pinky"].mode = "normal"
@@ -382,12 +381,12 @@ class pacEnv(gym.Env):
 
         # spawn maze and player
         self.maze = Maze(self.maze_width, self.maze_height)
-        self.player = Pac_Man(spawn_x, spawn_y,self.current_generation)
+        self.player = Pac_Man(spawn_x, spawn_y)
 
         # generate all pellets and power pellets
         self.power_pellets = []
         for loc in self.maze.power_pellet_locs:
-            self.power_pellets.append(PowerPellet(loc[0], loc[1],self.current_generation))
+            self.power_pellets.append(PowerPellet(loc[0], loc[1]))
         self.pellets = []
         for loc in self.maze.pellet_locs:
             self.pellets.append(Pellet(loc[0], loc[1],(neatMode and sparseMode and self.coinFlip)))
@@ -395,10 +394,10 @@ class pacEnv(gym.Env):
         self.ghosts = {}
 
         # spawn ghosts
-        self.ghosts["blinky"] = Ghost(house_x, house_y-2, (255, 80, 80), [house_x+7, house_y-7], "shadow",self.current_generation)
-        self.ghosts["pinky"] = Ghost(house_x-1, house_y, (255, 100, 150), [house_x-7, house_y-7], "speedy",self.current_generation)
-        self.ghosts["inky"] = Ghost(house_x, house_y, (100, 255, 255), [house_x+7, house_y+9], "bashful",self.current_generation)
-        self.ghosts["clyde"] = Ghost(house_x+1, house_y, (255, 200, 000), [house_x-7, house_y+9], "pokey",self.current_generation)
+        self.ghosts["blinky"] = Ghost(house_x, house_y-2, (255, 80, 80), [house_x+7, house_y-7], "shadow")
+        self.ghosts["pinky"] = Ghost(house_x-1, house_y, (255, 100, 150), [house_x-7, house_y-7], "speedy")
+        self.ghosts["inky"] = Ghost(house_x, house_y, (100, 255, 255), [house_x+7, house_y+9], "bashful")
+        self.ghosts["clyde"] = Ghost(house_x+1, house_y, (255, 200, 000), [house_x-7, house_y+9], "pokey")
 
         self.ghosts["blinky"].mode = "normal"
         self.ghosts["pinky"].mode = "normal"

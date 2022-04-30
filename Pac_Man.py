@@ -4,7 +4,7 @@ import math
 from Constants import *
 
 class Pac_Man:
-    def __init__(self, x, y,generation):
+    def __init__(self, x, y):
 
         #lives
         self.lives = 2

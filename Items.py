@@ -31,7 +31,7 @@ class Pellet:
 
 
 class PowerPellet:
-    def __init__(self, x, y,generation):
+    def __init__(self, x, y):
         self.array_coord = [x, y]
         self.x = x * block_size + half_block_size
         self.y = y * block_size + half_block_size
