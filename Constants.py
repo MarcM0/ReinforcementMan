@@ -41,7 +41,7 @@ modelCheckpoint = "A2C"
 neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 turnOffGhosts = False
-dieScore = 10000 #penalty for dying
+dieScore = 100 #penalty for dying
 scoreTimeConstraint = 60*500 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
 IdlePenalty = 2/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
 neatLives = 1 #number of lives neatMan has while training in neatmode
@@ -54,7 +54,7 @@ forceStuck = False #turns on antiracetrack and forces pacman to immediately turn
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
 disablePowerPellets = False #disable power pellets
 killScore = None #kill pacman if he gets this score (None to disable)
-suicidePenalty = 50 #penalty for approaching ghosts while they approach you
+suicidePenalty = 100 #penalty for approaching ghosts while they approach you
 
 #hyperparameters
 neatHyperparams = {"totalSteps":60*9999999999999999999, 

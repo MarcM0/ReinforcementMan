@@ -94,7 +94,7 @@ class pacEnv(gym.Env):
 
         fourDirs2=[UP,RIGHT,LEFT,DOWN]
         for Dir, closeghost, approaching in zip(fourDirs2,unrotatedCloseghosts,unrotatedGhostApproaching):
-            if(nextMove == Dir and approaching and closeghost<=2/5): 
+            if(nextMove == Dir and approaching and closeghost<=3/5): 
                 self.score-=suicidePenalty
                 break
 
