@@ -22,7 +22,7 @@ MapSizeY = 31
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
 #eval
-evaluateModelMode = False #runs the selected model for a select number of games and then prints the models statistics 
+evaluateModelMode = True #runs the selected model for a select number of games and then prints the models statistics 
 numberOfTests = 30 #number of games to evaluate on
 
 #architechture
@@ -33,11 +33,11 @@ numOutputs = 4
 checkEnvMode = False
 
 #Quick Toggles
-neatMode = True #puts the model into a training loop
-fastMode = False #run game as fast as possible (not human playable)
+neatMode = False #puts the model into a training loop
+fastMode = True #run game as fast as possible (not human playable)
 models_dir = "models" #where we save models
 logdir = "logs" #where we save logs
-modelCheckpoint = "A2C" 
+modelCheckpoint = "models/A2C/best_model/best_model.zip"  #path to model if you are in evaluate mode
 neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 turnOffGhosts = False

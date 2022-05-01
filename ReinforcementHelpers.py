@@ -5,24 +5,32 @@ import os
 from stable_baselines3.common.callbacks import CallbackList, CheckpointCallback, EvalCallback
 from Main import pacEnv
 
-def reinforcementLoad():
+def reinforcementLoad(modelPath):
     #create environment
     env = pacEnv()
+    env.run()
 
     #algo
-    model = A2C.load(modelCheckpoint, env=env)
+    model = A2C.load(modelPath, env=env)
 
-    #TODO
-    episodes = 5
+    scoreArray = []
 
-    for ep in range(episodes):
+    #run tests
+    for ep in range(numberOfTests):
+        print("Starting Game: {}/{}".format(ep+1, numberOfTests))
+        score = 0
         obs = env.reset()
         done = False
+        
         while not done:
             action, _states = model.predict(obs)
             obs, rewards, done, info = env.step(action)
-            env.render()
-            print(rewards)
+            score+=rewards
+
+        scoreArray.append(score)
+        print("Score:",score)
+    
+    print("\nScores:\n {}\n\nBest: {}\nWorst: {}\nAverage: {}".format(scoreArray, max(scoreArray), min(scoreArray), sum(scoreArray)*1.0/numberOfTests))
             
 def reinforcementTrain():
     #create folders

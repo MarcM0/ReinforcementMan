@@ -93,7 +93,7 @@ class pacEnv(gym.Env):
 
         fourDirs2=[UP,RIGHT,LEFT,DOWN]
         for Dir, closeghost, approaching in zip(fourDirs2,unrotatedCloseghosts,unrotatedGhostApproaching):
-            if(nextMove == Dir and approaching and closeghost<=3/5): 
+            if(neatMode and nextMove == Dir and approaching and closeghost<=3/5): 
                 self.score-=suicidePenalty
                 break
 
@@ -419,7 +419,6 @@ if __name__ == "__main__":
     if(neatMode):
         reinforcementTrain()
     elif(evaluateModelMode):
-        #todo
-        1==1
+        reinforcementLoad(modelCheckpoint)
     elif(not neatMode and not evaluateModelMode and not evaluateModelMode): main.run()
 
